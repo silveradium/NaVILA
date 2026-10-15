@@ -58,3 +58,23 @@ evaluation/habitat-lab
 evaluation/habitat-sim
 evaluation/data
 evaluation/eval_out
+
+# Datasets & model weights (download separately, see README)
+NaVILA-Dataset/
+*.safetensors
+*.pth
+*.ckpt
+
+# Go2 ROS 2 workspace: src is a separate clone of
+# https://github.com/abizovnuralem/go2_ros2_sdk, the rest is colcon build output
+go2_sdk/
+
+# legged-loco: demo GIFs only used by its README (~35MB)
+legged-loco-main/src/*.gif
+
+# Virtual envs
+.venv/
+venv/
+
+# Claude Code per-user settings
+.claude/settings.local.json

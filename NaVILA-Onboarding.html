@@ -1,0 +1,690 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>NaVILA Developer Onboarding</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Source+Sans+3:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: sticky table of contents on the left, one reading column on the right; stacks to one column on phones. */
+:root {
+  --bg: #f5f7f8;
+  --surface: #ffffff;
+  --sunken: #eaeff1;
+  --fg: #17242b;
+  --muted: #55666f;
+  --line: #d3dde1;
+  --accent: #0f6e7a;
+  --accent-soft: #dcefef;
+  --signal: #b4590f;
+  --signal-soft: #fbeadb;
+  --code-bg: #eef2f4;
+  --font-display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --font-body: "Source Sans 3", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  --step--1: 0.875rem;
+  --step-0: 1.0625rem;
+  --step-1: 1.25rem;
+  --step-2: 1.6rem;
+  --step-3: 2.4rem;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #11181c; --surface: #172127; --sunken: #1d2a31; --fg: #e3eaed; --muted: #9aabb3;
+    --line: #2c3c44; --accent: #5cc3cc; --accent-soft: #163a3f; --signal: #f0a364; --signal-soft: #3a2817;
+    --code-bg: #1b262c; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #11181c; --surface: #172127; --sunken: #1d2a31; --fg: #e3eaed; --muted: #9aabb3;
+  --line: #2c3c44; --accent: #5cc3cc; --accent-soft: #163a3f; --signal: #f0a364; --signal-soft: #3a2817;
+  --code-bg: #1b262c; color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+body {
+  background: var(--bg); color: var(--fg);
+  font-family: var(--font-body); font-size: var(--step-0); line-height: 1.65;
+  padding-inline: 16px;
+}
+.shell {
+  max-width: 1180px; margin: 0 auto;
+  display: grid; grid-template-columns: 230px minmax(0, 1fr); gap: 56px;
+  padding-block: 40px 96px;
+}
+@media (max-width: 900px) { .shell { grid-template-columns: minmax(0, 1fr); gap: 24px; padding-block: 24px 64px; } }
+
+/* TOC */
+nav.toc { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 24px); align-self: start; font-size: var(--step--1); }
+nav.toc .brand { font-family: var(--font-display); font-weight: 700; font-size: 1.15rem; margin-bottom: 4px; }
+nav.toc .sub { color: var(--muted); margin-bottom: 20px; }
+nav.toc ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; counter-reset: s; }
+nav.toc li { counter-increment: s; }
+nav.toc a {
+  display: flex; gap: 10px; padding: 5px 10px; border-radius: 6px;
+  color: var(--muted); text-decoration: none;
+}
+nav.toc a::before { content: counter(s, decimal-leading-zero); font-family: var(--font-mono); font-size: 0.75rem; padding-top: 2px; opacity: .7; }
+nav.toc a:hover, nav.toc a:focus-visible { background: var(--sunken); color: var(--fg); outline: none; }
+@media (max-width: 900px) {
+  nav.toc { position: static; border: 1px solid var(--line); border-radius: 10px; padding: 16px; background: var(--surface); }
+  nav.toc ol { grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); }
+}
+
+main { min-width: 0; }
+section { padding-block: 8px 40px; border-bottom: 1px solid var(--line); margin-bottom: 40px; }
+section:last-child { border-bottom: 0; }
+.eyebrow { font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); margin: 0 0 6px; }
+h1, h2, h3 { font-family: var(--font-display); line-height: 1.2; text-wrap: balance; margin: 0; }
+h1 { font-size: var(--step-3); font-weight: 700; letter-spacing: -0.01em; }
+h2 { font-size: var(--step-2); font-weight: 700; margin-bottom: 14px; }
+h3 { font-size: var(--step-1); font-weight: 600; margin: 28px 0 10px; }
+p, li { max-width: 68ch; }
+p { margin: 0 0 14px; }
+a { color: var(--accent); }
+.lede { font-size: 1.2rem; color: var(--muted); max-width: 62ch; margin-top: 14px; }
+code, kbd { font-family: var(--font-mono); font-size: .86em; background: var(--code-bg); padding: 1px 5px; border-radius: 4px; overflow-wrap: anywhere; }
+pre.code {
+  font-family: var(--font-mono); font-size: .84rem; line-height: 1.55;
+  background: var(--code-bg); border: 1px solid var(--line); border-radius: 8px;
+  padding: 14px 16px; overflow-x: auto; margin: 0 0 16px;
+}
+pre.code code { background: none; padding: 0; }
+.c { color: var(--muted); }
+
+/* hero facts */
+.facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; margin: 28px 0 8px; }
+.fact { border: 1px solid var(--line); background: var(--surface); border-radius: 10px; padding: 12px 14px; }
+.fact b { display: block; font-family: var(--font-mono); font-size: .95rem; color: var(--fg); }
+.fact span { font-size: var(--step--1); color: var(--muted); }
+
+/* callouts */
+.note { border-left: 3px solid var(--accent); background: var(--accent-soft); padding: 12px 16px; border-radius: 0 8px 8px 0; margin: 0 0 18px; max-width: 76ch; }
+.note.warn { border-color: var(--signal); background: var(--signal-soft); }
+.note p:last-child { margin: 0; }
+
+/* tables */
+.table-wrap { overflow-x: auto; margin: 0 0 18px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); }
+table { border-collapse: collapse; width: 100%; font-size: .95rem; }
+th, td { text-align: left; vertical-align: top; padding: 10px 14px; border-bottom: 1px solid var(--line); }
+tr:last-child td { border-bottom: 0; }
+th { font-family: var(--font-mono); font-size: .72rem; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); background: var(--sunken); font-weight: 600; }
+td:first-child { white-space: nowrap; }
+td.num { font-variant-numeric: tabular-nums; font-family: var(--font-mono); font-size: .85rem; }
+
+/* folder tree */
+.tree { font-family: var(--font-mono); font-size: .84rem; line-height: 1.5; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px; overflow-x: auto; margin-bottom: 18px; }
+.tree .row { display: grid; grid-template-columns: minmax(260px, max-content) 1fr; gap: 16px; white-space: pre; }
+.tree .row span:last-child { color: var(--muted); font-family: var(--font-body); font-size: .9rem; white-space: normal; min-width: 220px; }
+.tree .dir { color: var(--accent); font-weight: 600; }
+.tree .local { color: var(--signal); }
+
+/* chips */
+.chip { display: inline-block; font-family: var(--font-mono); font-size: .72rem; padding: 1px 8px; border-radius: 999px; border: 1px solid var(--line); color: var(--muted); vertical-align: 2px; }
+.chip.you { border-color: var(--signal); color: var(--signal); }
+.chip.core { border-color: var(--accent); color: var(--accent); }
+
+/* diagrams */
+.diagram { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 18px; overflow-x: auto; margin: 0 0 10px; }
+.diagram pre.mermaid { margin: 0; background: none; text-align: center; }
+.caption { font-size: var(--step--1); color: var(--muted); margin: 0 0 24px; }
+
+/* workflow cards */
+.paths { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; margin-bottom: 18px; }
+.path { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px; display: grid; grid-template-rows: auto auto 1fr auto; gap: 6px; min-width: 0; }
+.path h3 { margin: 0; font-size: 1.1rem; }
+.path p { font-size: .95rem; color: var(--muted); margin: 0; }
+.path code { font-size: .78rem; }
+.path .env { font-family: var(--font-mono); font-size: .75rem; color: var(--accent); }
+
+/* action grammar */
+.grammar { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 10px; margin-bottom: 18px; }
+.act { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; }
+.act .say { font-family: var(--font-mono); font-size: .82rem; color: var(--fg); }
+.act .does { font-size: .9rem; color: var(--muted); margin-top: 4px; }
+
+ol.steps { padding-left: 1.3em; }
+ol.steps li { margin-bottom: 8px; }
+dl.gloss { display: grid; grid-template-columns: max-content 1fr; gap: 8px 20px; margin: 0; }
+dl.gloss dt { font-family: var(--font-mono); font-size: .88rem; font-weight: 600; }
+dl.gloss dd { margin: 0; color: var(--muted); max-width: 64ch; }
+@media (max-width: 560px) { dl.gloss { grid-template-columns: 1fr; gap: 2px; } dl.gloss dd { margin-bottom: 10px; } }
+</style>
+</head>
+<body>
+<div class="shell">
+  <nav class="toc" aria-label="Contents">
+    <div class="brand">NaVILA</div>
+    <div class="sub">Developer onboarding</div>
+    <ol>
+      <li><a href="#overview">What it is</a></li>
+      <li><a href="#workflows">Three ways to run it</a></li>
+      <li><a href="#architecture">Architecture</a></li>
+      <li><a href="#folders">Folder structure</a></li>
+      <li><a href="#entry">Entry points</a></li>
+      <li><a href="#dataflow">Data flow</a></li>
+      <li><a href="#api">Interfaces (the "API")</a></li>
+      <li><a href="#sequences">Sequence diagrams</a></li>
+      <li><a href="#gotchas">Gotchas</a></li>
+      <li><a href="#glossary">Glossary</a></li>
+    </ol>
+  </nav>
+
+  <main>
+    <!-- 01 -->
+    <section id="overview">
+      <p class="eyebrow">RSS 2025 · NVIDIA / UCSD</p>
+      <h1>NaVILA: a vision-language model that drives a legged robot</h1>
+      <p class="lede">You give it a navigation instruction and the robot's recent camera frames. It answers with the next move in plain English, such as <code>The next action is turn left 30 degree.</code> A separate low-level locomotion policy turns that move into leg motion.</p>
+
+      <div class="facts">
+        <div class="fact"><b>Llama-3 8B</b><span>Language model backbone</span></div>
+        <div class="fact"><b>SigLIP 384px</b><span>Vision encoder (so400m, patch 14)</span></div>
+        <div class="fact"><b>8 frames</b><span>7 history + 1 current per step</span></div>
+        <div class="fact"><b>4 actions</b><span>stop · forward · left · right</span></div>
+      </div>
+
+      <h3>The two-level idea</h3>
+      <p>This repository contains the <strong>high level</strong> only: the VLA model, its training code, and a simulator benchmark. The low-level locomotion policy lives in a separate repo (<a href="https://github.com/yang-zj1026/legged-loco" target="_blank" rel="noopener">legged-loco</a>), and the Isaac Sim benchmark in <a href="https://github.com/yang-zj1026/NaVILA-Bench" target="_blank" rel="noopener">NaVILA-Bench</a>.</p>
+      <div class="diagram">
+<pre class="mermaid">
+flowchart LR
+  I["Instruction text"] --> V
+  C["Camera frames"] --> V
+  V["NaVILA VLA<br/>(this repo)"] -- "'move forward 75 cm'" --> L["Locomotion policy<br/>(legged-loco repo)"]
+  L -- "joint commands" --> R["Legged robot / simulator"]
+  R -- "new frame" --> C
+</pre>
+      </div>
+      <p class="caption">The VLA runs slowly and reasons in language. The locomotion policy runs in real time and handles obstacle avoidance.</p>
+
+      <div class="note">
+        <p><strong>Heritage matters.</strong> The <code>llava/</code> package is a fork of NVIDIA's VILA codebase, which itself forks LLaVA. Most of its ~200 files support generic image/video chat models. NaVILA adds a small, focused layer on top: a VLN-CE dataset class, a navigation prompt, a Habitat trainer, and action parsing. Learn those parts first and treat the rest as library code.</p>
+      </div>
+    </section>
+
+    <!-- 02 -->
+    <section id="workflows">
+      <p class="eyebrow">Start here</p>
+      <h2>Three ways to run it</h2>
+      <p>Everything in the repo serves one of three workflows. They use different Python environments because the simulator pins old library versions.</p>
+      <div class="paths">
+        <div class="path">
+          <h3>Quick inference</h3>
+          <span class="env">env: navila · 1 GPU, 16 GB OK in 4-bit</span>
+          <p>Load the checkpoint, feed 8 frames plus an instruction, print the predicted action. Fastest way to see the model work.</p>
+          <code>python scripts/inference/quick_infer.py --num-samples 10</code>
+        </div>
+        <div class="path">
+          <h3>Training (SFT)</h3>
+          <span class="env">env: navila · multi-node, 8×GPU, DeepSpeed ZeRO-3</span>
+          <p>Fine-tune the pretrained VILA checkpoint on a mixture of navigation and video-QA datasets.</p>
+          <code>bash scripts/train/sft_8frames.sh</code>
+        </div>
+        <div class="path">
+          <h3>Simulator evaluation</h3>
+          <span class="env">env: navila-eval · Habitat 0.1.7</span>
+          <p>Run the model closed-loop in Matterport3D scenes on R2R / RxR val-unseen and compute SR, SPL, nDTW.</p>
+          <code>cd evaluation &amp;&amp; bash scripts/eval/r2r.sh CKPT 1 0 "0"</code>
+        </div>
+      </div>
+
+      <h3>Environment setup</h3>
+<pre class="code"><code><span class="c"># training / inference env</span>
+./environment_setup.sh navila      <span class="c"># conda env, flash-attn 2.5.8, pip install -e ".[train,eval]"</span>
+conda activate navila              <span class="c"># also copies llava/train/transformers_replace into site-packages</span>
+
+<span class="c"># evaluation env (separate!)</span>
+conda create -n navila-eval python=3.10
+<span class="c"># build habitat-sim + habitat-lab v0.1.7 from source (VLN-CE guide), then:</span>
+python evaluation/scripts/habitat_sim_autofix.py
+pip install -r evaluation/requirements.txt
+pip install webdataset==0.1.103</code></pre>
+
+      <h3>What is already on this machine</h3>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Path</th><th>Contents</th><th>Tracked in git?</th></tr></thead>
+        <tbody>
+          <tr><td><code>checkpoints/navila-llama3-8b-8f/</code></td><td>Released checkpoint: <code>llm/</code> (4 safetensors shards + tokenizer), <code>vision_tower/</code>, <code>mm_projector/</code>, top-level <code>config.json</code></td><td>No (ignored)</td></tr>
+          <tr><td><code>NaVILA-Dataset/RxR/</code></td><td><code>annotations.json</code> with 417,578 samples and <code>train/</code> with 6,660 episode frame folders</td><td>No (ignored)</td></tr>
+          <tr><td><code>scripts/inference/quick_infer.py</code></td><td>Local single-GPU test script with 4-bit / 8-bit / fp16 modes and a dataset accuracy check</td><td>No (untracked)</td></tr>
+          <tr><td><code>navila_test/quick_infer.py</code></td><td>Empty file, 0 bytes. Safe to delete or fill in.</td><td>No (untracked)</td></tr>
+        </tbody>
+      </table></div>
+    </section>
+
+    <!-- 03 -->
+    <section id="architecture">
+      <p class="eyebrow">How the pieces fit</p>
+      <h2>Architecture</h2>
+
+      <h3>System view</h3>
+      <div class="diagram">
+<pre class="mermaid">
+flowchart TB
+  subgraph DATA["Data"]
+    DS["NaVILA-Dataset<br/>R2R · RxR · EnvDrop · Human · ScanQA"]
+    GQA["General video QA<br/>video_chatgpt · sharegpt"]
+    HAB["evaluation/data<br/>MP3D scenes + VLN-CE episodes"]
+  end
+  subgraph LLAVA["llava/ package (shared core)"]
+    DMIX["data/datasets_mixture.py<br/>dataset registry"]
+    DSET["data/dataset.py<br/>LazyVLNCEDataset"]
+    MODEL["model/<br/>LlavaLlamaModel"]
+    TRAIN["train/train.py<br/>LLaVATrainer"]
+    UTIL["mm_utils.py · conversation.py<br/>prompt + image helpers"]
+  end
+  subgraph EVAL["evaluation/ (Habitat)"]
+    RUN["run.py"]
+    NT["vlnce_baselines/navila_trainer.py"]
+    HX["habitat_extensions/<br/>tasks, sensors, measures"]
+  end
+  CK[("checkpoints/<br/>navila-llama3-8b-8f")]
+
+  DS --> DMIX
+  GQA --> DMIX
+  DMIX --> DSET --> TRAIN
+  TRAIN --> MODEL
+  TRAIN -- "save" --> CK
+  CK -- "load_pretrained_model" --> NT
+  CK -- "load_pretrained_model" --> QI["scripts/inference/quick_infer.py"]
+  RUN --> NT
+  NT --> UTIL
+  NT --> HX
+  HAB --> HX
+  QI --> UTIL
+</pre>
+      </div>
+      <p class="caption">Training and evaluation share one model class and one prompt. Everything else is separate.</p>
+
+      <h3>Inside the model</h3>
+      <p><code>LlavaLlamaModel</code> (<code>llava/model/language_model/llava_llama.py</code>) owns three sub-models, each saved in its own checkpoint folder:</p>
+      <div class="diagram">
+<pre class="mermaid">
+flowchart LR
+  F["8 RGB frames<br/>384×384"] --> VT["vision_tower<br/>SigLIP so400m<br/>27×27 = 729 tokens × 1152"]
+  VT --> MP["mm_projector<br/>mlp_downsample<br/>2×2 merge → 196 tokens × 4096"]
+  T["Prompt tokens<br/>with 8 image slots"] --> SPLICE
+  MP --> SPLICE["prepare_inputs_labels_for_multimodal<br/>replace each image slot with 196 embeddings"]
+  SPLICE --> LLM["llm<br/>Llama-3 8B<br/>32 layers, GQA 8 KV heads"]
+  LLM --> OUT["'The next action is ...'"]
+</pre>
+      </div>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Stage</th><th>Shape per frame</th><th>Where</th></tr></thead>
+        <tbody>
+          <tr><td>SigLIP output (layer −2)</td><td class="num">729 × 1152</td><td><code>multimodal_encoder/siglip_encoder.py</code></td></tr>
+          <tr><td>DownSampleBlock (pad to 28×28, merge 2×2)</td><td class="num">196 × 4608</td><td><code>multimodal_projector/base_projector.py</code></td></tr>
+          <tr><td>LayerNorm → Linear → GELU → Linear</td><td class="num">196 × 4096</td><td>same file</td></tr>
+          <tr><td>All 8 frames in the prompt</td><td class="num">1,568 visual tokens</td><td>fits in <code>model_max_length</code> 4096</td></tr>
+        </tbody>
+      </table></div>
+      <p><code>LlavaMetaModel.init_vlm</code> in <code>llava/model/llava_arch.py</code> builds the three parts from <code>llm_cfg</code>, <code>vision_tower_cfg</code> and <code>mm_projector_cfg</code> in the checkpoint's <code>config.json</code>. All three are trained in NaVILA's SFT (<code>tune_vision_tower</code>, <code>tune_mm_projector</code> and <code>tune_language_model</code> are all <code>True</code>).</p>
+    </section>
+
+    <!-- 04 -->
+    <section id="folders">
+      <p class="eyebrow">Where things live</p>
+      <h2>Folder structure and responsibilities</h2>
+      <p><span class="chip core">core</span> marks the files NaVILA-specific work touches most. <span class="chip you">local</span> marks things that exist only on this machine.</p>
+
+      <div class="tree">
+        <div class="row"><span class="dir">NaVILA/</span><span></span></div>
+        <div class="row"><span>├─ <span class="dir">llava/</span></span><span>The model library (forked from VILA). Installed as package <code>vila</code> by <code>pip install -e .</code></span></div>
+        <div class="row"><span>│  ├─ <span class="dir">model/</span></span><span>Model definition and loading</span></div>
+        <div class="row"><span>│  │  ├─ builder.py <span class="chip core">core</span></span><span><code>load_pretrained_model()</code>: the one function every inference path calls</span></div>
+        <div class="row"><span>│  │  ├─ llava_arch.py <span class="chip core">core</span></span><span>Builds LLM + vision tower + projector; splices image features into text embeddings</span></div>
+        <div class="row"><span>│  │  ├─ language_model/</span><span><code>llava_llama.py</code> (used), plus Mistral / Gemma / MPT variants (unused by NaVILA)</span></div>
+        <div class="row"><span>│  │  ├─ multimodal_encoder/</span><span>Vision towers: SigLIP (used), CLIP, InternViT, RADIO</span></div>
+        <div class="row"><span>│  │  └─ multimodal_projector/</span><span>Vision → language projector; NaVILA uses <code>mlp_downsample</code></span></div>
+        <div class="row"><span>│  ├─ <span class="dir">data/</span></span><span>Datasets and the registry that names them</span></div>
+        <div class="row"><span>│  │  ├─ datasets_mixture.py <span class="chip core">core</span></span><span>Registers <code>r2r</code>, <code>rxr</code>, <code>envdrop</code>, <code>human</code>, <code>scanqa</code>… with file paths. Edit the <code>/PATH_TO_DATA</code> placeholders here</span></div>
+        <div class="row"><span>│  │  ├─ builder.py</span><span>Parses <code>r2r+rxr*2</code> mixture strings and picks a dataset class by type</span></div>
+        <div class="row"><span>│  │  └─ dataset.py <span class="chip core">core</span></span><span><code>LazyVLNCEDataset</code> and <code>LazyEnvDropDataset</code> build the navigation prompt; plus the collator</span></div>
+        <div class="row"><span>│  ├─ <span class="dir">train/</span></span><span>Training loop, DeepSpeed and sequence-parallel helpers</span></div>
+        <div class="row"><span>│  │  ├─ train_mem.py</span><span>Training entry point (patches HF/accelerate, then calls <code>train()</code>)</span></div>
+        <div class="row"><span>│  │  ├─ train.py · args.py</span><span>Argument dataclasses, model construction, <code>LLaVATrainer</code></span></div>
+        <div class="row"><span>│  │  ├─ transformers_replace/</span><span>Patched copies of HF files, copied over the installed transformers</span></div>
+        <div class="row"><span>│  │  └─ deepspeed_replace/</span><span>Patched DeepSpeed files, copied the same way</span></div>
+        <div class="row"><span>│  ├─ mm_utils.py <span class="chip core">core</span></span><span><code>vlnce_frame_sampling</code>, <code>process_images</code>, <code>tokenizer_image_token</code>, stopping criteria</span></div>
+        <div class="row"><span>│  ├─ conversation.py</span><span>Chat templates; NaVILA uses <code>llama_3</code></span></div>
+        <div class="row"><span>│  ├─ constants.py</span><span><code>IMAGE_TOKEN_INDEX = -200</code>, <code>IGNORE_INDEX = -100</code></span></div>
+        <div class="row"><span>│  ├─ eval/run_navigation.py</span><span>Single video + instruction → action, CLI script</span></div>
+        <div class="row"><span>│  ├─ eval/ (rest), data_aug/, trl/, wids/</span><span>Inherited VILA benchmarks, data tools, RLHF, webdataset. Not needed for NaVILA</span></div>
+        <div class="row"><span>│  ├─ cli/ · entry.py</span><span><code>vila-run</code> (SLURM launcher), <code>vila-eval</code>, and <code>llava.load()</code></span></div>
+        <div class="row"><span>├─ <span class="dir">evaluation/</span></span><span>Habitat / VLN-CE benchmark harness (forked from VLN-CE). Run from inside this folder</span></div>
+        <div class="row"><span>│  ├─ run.py <span class="chip core">core</span></span><span>Eval entry point: loads YAML config, looks up the trainer by name</span></div>
+        <div class="row"><span>│  ├─ vlnce_baselines/navila_trainer.py <span class="chip core">core</span></span><span>The closed-loop episode runner: prompt, generate, parse, step the sim</span></div>
+        <div class="row"><span>│  ├─ vlnce_baselines/config/</span><span><code>r2r_baselines/navila.yaml</code>, <code>rxr_baselines/navila.yaml</code></span></div>
+        <div class="row"><span>│  ├─ vlnce_baselines/ (rest)</span><span>VLN-CE baseline agents (CMA, Seq2Seq, DAgger, waypoint). Kept for reference</span></div>
+        <div class="row"><span>│  ├─ habitat_extensions/</span><span>Registers datasets <code>VLN-CE-v1</code> / <code>RxR-VLN-CE-v1</code>, sensors, metrics, task YAMLs</span></div>
+        <div class="row"><span>│  ├─ scripts/eval/r2r.sh</span><span>Launches one <code>run.py</code> per GPU, each on a chunk of episodes</span></div>
+        <div class="row"><span>│  ├─ scripts/eval_jsons.py</span><span>Merges per-chunk result JSONs into final metrics</span></div>
+        <div class="row"><span>│  ├─ scripts/habitat_sim_autofix.py · replace/</span><span>Patches habitat-sim 0.1.7 for newer NumPy</span></div>
+        <div class="row"><span>│  └─ data/connectivity_graphs.pkl</span><span>Only tracked data file; scenes and episodes are downloaded separately</span></div>
+        <div class="row"><span>├─ <span class="dir">scripts/</span></span><span>Shell launchers and utilities</span></div>
+        <div class="row"><span>│  ├─ train/sft_8frames.sh</span><span>The NaVILA SFT recipe (torchrun + DeepSpeed)</span></div>
+        <div class="row"><span>│  ├─ zero3.json</span><span>DeepSpeed ZeRO-3 config</span></div>
+        <div class="row"><span>│  ├─ extract_rawframes.py</span><span>Turns downloaded YouTube touring videos into frame folders</span></div>
+        <div class="row"><span>│  └─ <span class="local">inference/quick_infer.py</span> <span class="chip you">local</span></span><span>Single-GPU smoke test (see Entry points)</span></div>
+        <div class="row"><span>├─ <span class="local">checkpoints/</span> <span class="chip you">local</span></span><span>Downloaded model weights</span></div>
+        <div class="row"><span>├─ <span class="local">NaVILA-Dataset/</span> <span class="chip you">local</span></span><span>Downloaded training annotations and frames</span></div>
+        <div class="row"><span>├─ <span class="local">navila_test/</span> <span class="chip you">local</span></span><span>Contains one empty file</span></div>
+        <div class="row"><span>├─ assets/</span><span>README images and GIFs</span></div>
+        <div class="row"><span>├─ environment_setup.sh</span><span>Creates the training conda env</span></div>
+        <div class="row"><span>└─ pyproject.toml</span><span>Package <code>vila</code> 1.0.0, pinned deps, black/isort at 120 cols</span></div>
+      </div>
+    </section>
+
+    <!-- 05 -->
+    <section id="entry">
+      <p class="eyebrow">Where execution starts</p>
+      <h2>Entry points</h2>
+      <p>There is no single <code>main</code>. Each workflow has its own script, and all of them end up in <code>load_pretrained_model()</code> or <code>train()</code>.</p>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Command</th><th>File → first real call</th><th>Purpose</th></tr></thead>
+        <tbody>
+          <tr><td><code>bash scripts/train/sft_8frames.sh</code></td><td><code>llava/train/train_mem.py</code> → <code>train.train()</code></td><td>Fine-tune. Needs <code>n_node</code>, <code>GPUS_PER_NODE</code>, <code>MASTER_ADDR</code>, <code>MASTER_PORT</code>, <code>CURRENT_RANK</code> env vars</td></tr>
+          <tr><td><code>bash evaluation/scripts/eval/r2r.sh CKPT N START "GPUS"</code></td><td><code>evaluation/run.py</code> → <code>NaVILATrainer.eval()</code></td><td>Closed-loop benchmark in Habitat</td></tr>
+          <tr><td><code>python evaluation/run.py --run-type eval --exp-config … EVAL_CKPT_PATH_DIR …</code></td><td>same</td><td>Direct form; trailing <code>KEY VALUE</code> pairs override YAML</td></tr>
+          <tr><td><code>python evaluation/scripts/eval_jsons.py DIR N</code></td><td><code>aggregate_statistics()</code></td><td>Print mean SR, SPL, nDTW, oracle SR</td></tr>
+          <tr><td><code>python scripts/inference/quick_infer.py</code></td><td><code>main()</code> → <code>load_model()</code> → <code>predict()</code></td><td>Local smoke test on RxR samples or your own video</td></tr>
+          <tr><td><code>python llava/eval/run_navigation.py</code></td><td><code>eval_model()</code></td><td>Upstream single-video inference script</td></tr>
+          <tr><td><code>python scripts/extract_rawframes.py</code></td><td>—</td><td>Data prep for the Human touring set</td></tr>
+          <tr><td><code>vila-run</code> / <code>vila-eval</code></td><td><code>llava/cli/run.py</code> / <code>eval.py</code></td><td>Inherited SLURM helpers (need <code>VILA_SLURM_*</code> env vars)</td></tr>
+        </tbody>
+      </table></div>
+    </section>
+
+    <!-- 06 -->
+    <section id="dataflow">
+      <p class="eyebrow">Follow one sample</p>
+      <h2>Data flow</h2>
+
+      <h3>1. A training sample on disk</h3>
+      <p>Each entry in <code>annotations.json</code> is one decision point inside one episode. This is the first RxR entry on this machine (frames list shortened):</p>
+<pre class="code"><code>{
+  "video_id": "23289-31",
+  "q": "We are going to start facing a living room area, and a kitchen island. Turn a slightly to the right, ...",
+  "a": "The next action is turn right 15 degree.",
+  "frames": ["23289/frame_0.jpg", "23289/frame_1.jpg", ... 72 paths]
+}</code></pre>
+      <p><code>frames</code> holds every frame seen so far in the episode. The last one is the current view.</p>
+
+      <h3>2. From frames to model input</h3>
+      <ol class="steps">
+        <li><strong>Sample 8 frames.</strong> <code>vlnce_frame_sampling()</code> keeps the latest frame and picks 7 evenly spaced history frames. Short histories are left-padded with black frames.</li>
+        <li><strong>Build the prompt.</strong> The instruction is cleaned (newlines removed, sentences capitalised) and inserted into a fixed template with 7 history <code>&lt;image&gt;</code> slots and 1 current slot.</li>
+        <li><strong>Apply the chat template.</strong> <code>conv_templates["llama_3"]</code> wraps it as a user turn. In training, the answer becomes the assistant turn and only its tokens are scored by the loss.</li>
+        <li><strong>Tokenize.</strong> <code>tokenizer_image_token()</code> turns each <code>&lt;image&gt;</code> into the placeholder id <code>-200</code>.</li>
+        <li><strong>Encode images.</strong> <code>process_images()</code> resizes to 384×384; vision tower plus projector give 196 embeddings per frame.</li>
+        <li><strong>Splice.</strong> <code>prepare_inputs_labels_for_multimodal()</code> swaps each <code>-200</code> for its frame's embeddings and feeds the result to Llama-3.</li>
+      </ol>
+
+      <div class="note">
+        <p><strong>The prompt is a contract.</strong> The same sentence ("Imagine you are a robot programmed for navigation tasks…") is copied into four places: <code>llava/data/dataset.py</code>, <code>evaluation/vlnce_baselines/navila_trainer.py</code>, <code>llava/eval/run_navigation.py</code> and <code>scripts/inference/quick_infer.py</code>. If you change it in one place, change it in all four, or train/test behaviour will drift apart.</p>
+      </div>
+
+      <h3>3. Output grammar and how it becomes motion</h3>
+      <p>The model always answers with one sentence. In simulation, <code>navila_trainer.py</code> parses it with regexes and breaks it into Habitat's fixed steps (25 cm forward, 15° turn):</p>
+      <div class="grammar">
+        <div class="act"><div class="say">… move forward 75 cm.</div><div class="does">3 × MOVE_FORWARD (25 cm each). Values off the 25 grid snap to 25 / 50 / 75.</div></div>
+        <div class="act"><div class="say">… turn left 30 degree.</div><div class="does">2 × TURN_LEFT (15° each). Off-grid values snap to 15 / 30 / 45.</div></div>
+        <div class="act"><div class="say">… turn right 45 degree.</div><div class="does">3 × TURN_RIGHT.</div></div>
+        <div class="act"><div class="say">… stop.</div><div class="does">STOP ends the episode; metrics are recorded.</div></div>
+      </div>
+      <p>The first primitive runs immediately. The rest go into <code>queue_actions</code> and are executed on later loop turns without calling the model again. If nothing matches, the action defaults to forward 25 cm.</p>
+
+      <h3>4. Results</h3>
+      <p>Each episode's Habitat measures (distance to goal, success, SPL, nDTW, path length, oracle success, steps) go into <code>eval_out/&lt;ckpt&gt;/VLN-CE-v1/val_unseen/val_unseen_&lt;N&gt;-&lt;i&gt;.json</code>. Videos go to <code>videos/</code> next to it when <code>VIDEO_OPTION</code> is set. <code>eval_jsons.py</code> averages across chunks.</p>
+    </section>
+
+    <!-- 07 -->
+    <section id="api">
+      <p class="eyebrow">Interfaces</p>
+      <h2>API endpoints</h2>
+      <div class="note warn">
+        <p><strong>NaVILA has no HTTP API.</strong> There is no server, route or endpoint in this repo. <code>fastapi</code>, <code>uvicorn</code> and <code>gradio</code> appear in <code>pyproject.toml</code> only because they were inherited from VILA, and no NaVILA code imports them. The interfaces you will actually program against are the Python functions, CLI arguments, config keys and registries below. If you need a network endpoint for a robot, you would wrap <code>predict()</code> from <code>quick_infer.py</code> in a small server yourself.</p>
+      </div>
+
+      <h3>Python inference API</h3>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Function</th><th>Signature</th><th>Returns / notes</th></tr></thead>
+        <tbody>
+          <tr><td><code>load_pretrained_model</code></td><td><code>(model_path, model_name, model_base=None, load_8bit=False, load_4bit=False, device_map="auto", **kwargs)</code></td><td><code>(tokenizer, model, image_processor, context_len)</code>. <code>llava/model/builder.py</code></td></tr>
+          <tr><td><code>llava.load</code></td><td><code>(model_path, model_base=None, devices=None, **kwargs)</code></td><td>Model only; sets the conversation mode from the path name. <code>llava/entry.py</code></td></tr>
+          <tr><td><code>vlnce_frame_sampling</code></td><td><code>(frames, num_frames=8)</code></td><td>List of 8 PIL images; accepts paths or PIL images. <code>llava/mm_utils.py</code></td></tr>
+          <tr><td><code>get_frame_from_vcap_vlnce</code></td><td><code>(cv2.VideoCapture, num_frames)</code></td><td><code>(images, frame_count)</code> from a video file</td></tr>
+          <tr><td><code>process_images</code></td><td><code>(images, image_processor, model.config)</code></td><td>Tensor <code>[8, 3, 384, 384]</code></td></tr>
+          <tr><td><code>tokenizer_image_token</code></td><td><code>(prompt, tokenizer, IMAGE_TOKEN_INDEX, return_tensors="pt")</code></td><td>Token ids with <code>-200</code> at each image slot</td></tr>
+          <tr><td><code>model.generate</code></td><td><code>(input_ids, images=…, do_sample=False, max_new_tokens=32, stopping_criteria=[…])</code></td><td>Greedy decode; overridden in <code>llava_arch.py</code> to splice images first</td></tr>
+        </tbody>
+      </table></div>
+
+      <h3>CLI: <code>scripts/inference/quick_infer.py</code></h3>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Flag</th><th>Default</th><th>Meaning</th></tr></thead>
+        <tbody>
+          <tr><td><code>--model-path</code></td><td><code>checkpoints/navila-llama3-8b-8f</code></td><td>Checkpoint folder</td></tr>
+          <tr><td><code>--precision</code></td><td><code>4bit</code></td><td><code>4bit</code> | <code>8bit</code> | <code>fp16</code> (fp16 offloads to CPU on a 16 GB card)</td></tr>
+          <tr><td><code>--annotations</code> / <code>--image-folder</code></td><td>RxR paths</td><td>Dataset mode inputs</td></tr>
+          <tr><td><code>--num-samples</code> / <code>--seed</code></td><td><code>10</code> / <code>0</code></td><td>How many random samples to score</td></tr>
+          <tr><td><code>--video-file</code> + <code>--query</code></td><td>—</td><td>Custom mode: mp4 or frame folder plus your instruction</td></tr>
+        </tbody>
+      </table></div>
+
+      <h3>CLI: <code>evaluation/run.py</code></h3>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Arg</th><th>Meaning</th></tr></thead>
+        <tbody>
+          <tr><td><code>--run-type</code></td><td><code>eval</code> (NaVILA's <code>train()</code> raises <code>NotImplementedError</code>)</td></tr>
+          <tr><td><code>--exp-config</code></td><td><code>vlnce_baselines/config/r2r_baselines/navila.yaml</code> or the RxR one</td></tr>
+          <tr><td><code>--num-chunks</code> / <code>--chunk-idx</code></td><td>Split episodes across processes</td></tr>
+          <tr><td>trailing opts</td><td>YAML overrides, e.g. <code>EVAL_CKPT_PATH_DIR /path EVAL.SPLIT val_unseen EVAL.EPISODE_COUNT 50</code></td></tr>
+        </tbody>
+      </table></div>
+
+      <h3>Registries (names you reference in config)</h3>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Registry</th><th>Name</th><th>Defined in</th></tr></thead>
+        <tbody>
+          <tr><td>Habitat-baselines trainer</td><td><code>navila</code></td><td><code>evaluation/vlnce_baselines/navila_trainer.py</code></td></tr>
+          <tr><td>Habitat dataset</td><td><code>VLN-CE-v1</code>, <code>RxR-VLN-CE-v1</code></td><td><code>evaluation/habitat_extensions/task.py</code></td></tr>
+          <tr><td>Training datasets</td><td><code>r2r</code>, <code>rxr</code>, <code>human</code> (type <code>vlnce</code>); <code>envdrop</code>; <code>scanqa</code>, <code>video_chatgpt</code>, <code>sharegpt_video</code>, <code>sharegpt4v_sft</code> (type <code>torch</code>)</td><td><code>llava/data/datasets_mixture.py</code></td></tr>
+          <tr><td>Mixture syntax</td><td><code>r2r+rxr*2+human</code> (<code>*N</code> repeats a set)</td><td><code>llava/data/builder.py</code></td></tr>
+          <tr><td>Chat template</td><td><code>llama_3</code></td><td><code>llava/conversation.py</code></td></tr>
+        </tbody>
+      </table></div>
+    </section>
+
+    <!-- 08 -->
+    <section id="sequences">
+      <p class="eyebrow">Who calls whom</p>
+      <h2>Sequence diagrams</h2>
+
+      <h3>A. One inference step (quick_infer.py)</h3>
+      <div class="diagram">
+<pre class="mermaid">
+sequenceDiagram
+  autonumber
+  actor Dev
+  participant QI as quick_infer.py
+  participant B as builder.load_pretrained_model
+  participant MU as mm_utils
+  participant CV as conversation llama_3
+  participant M as LlavaLlamaModel
+  Dev->>QI: run with --precision 4bit
+  QI->>B: load_model(path, BitsAndBytesConfig)
+  B->>M: build llm + vision_tower + mm_projector
+  B-->>QI: tokenizer, model, image_processor
+  QI->>MU: vlnce_frame_sampling(paths, 8)
+  MU-->>QI: 8 PIL frames
+  QI->>CV: build_prompt(instruction, 8)
+  CV-->>QI: prompt string
+  QI->>MU: process_images + tokenizer_image_token
+  MU-->>QI: image tensor, input_ids with -200
+  QI->>M: generate(input_ids, images, max_new_tokens=32)
+  M->>M: encode_images, splice embeddings, decode
+  M-->>QI: output ids
+  QI-->>Dev: "The next action is turn right 15 degree."
+</pre>
+      </div>
+
+      <h3>B. Closed-loop evaluation episode (Habitat)</h3>
+      <div class="diagram">
+<pre class="mermaid">
+sequenceDiagram
+  autonumber
+  participant SH as r2r.sh
+  participant R as run.py
+  participant T as NaVILATrainer
+  participant M as Model
+  participant E as Habitat env
+  SH->>R: one process per GPU, chunk i of N
+  R->>T: baseline_registry.get_trainer("navila")
+  T->>M: load_pretrained_model(EVAL_CKPT_PATH_DIR)
+  T->>E: construct_envs, reset
+  E-->>T: rgb observation, instruction
+  loop until all episodes in chunk are done
+    alt queue_actions not empty
+      T->>E: step(queued primitive)
+    else ask the model
+      T->>T: sample_and_pad_images(past + current, 8)
+      T->>M: generate(prompt, 8 frames)
+      M-->>T: "move forward 75 cm"
+      T->>T: regex parse, snap to 25 cm grid
+      T->>E: step(MOVE_FORWARD)
+      T->>T: queue 2 more MOVE_FORWARD
+    end
+    E-->>T: observation, done, info
+    opt episode done
+      T->>T: save episode metrics
+      T->>E: reset_at(i), clear history
+    end
+  end
+  T->>T: write val_unseen_N-i.json
+</pre>
+      </div>
+
+      <h3>C. Training step</h3>
+      <div class="diagram">
+<pre class="mermaid">
+sequenceDiagram
+  autonumber
+  participant SH as sft_8frames.sh
+  participant TM as train_mem.py
+  participant TR as train.train
+  participant MIX as datasets_mixture + builder
+  participant DS as LazyVLNCEDataset
+  participant LT as LLaVATrainer
+  participant M as LlavaLlamaModel
+  SH->>TM: torchrun, deepspeed zero3
+  TM->>TR: train() with HF/accelerate patches
+  TR->>M: from pretrained navila-siglip-llama3-8b-v1.5-pretrain
+  TR->>MIX: build_dataset("r2r+rxr+envdrop+human+...")
+  MIX->>DS: one dataset per name, ConcatDataset
+  TR->>LT: LLaVATrainer(model, datasets, collator)
+  loop each batch
+    LT->>DS: __getitem__(i)
+    DS->>DS: sample 8 frames, build prompt + answer, tokenize
+    DS-->>LT: input_ids, labels, image tensor
+    LT->>M: forward(input_ids, images, labels)
+    M-->>LT: cross-entropy loss on answer tokens
+    LT->>LT: backward, optimizer step
+  end
+  LT->>TR: save every 100 steps
+  TR->>TR: safe_save_model_for_hf_trainer to output_dir
+</pre>
+      </div>
+
+      <h3>D. Multi-GPU evaluation and scoring</h3>
+      <div class="diagram">
+<pre class="mermaid">
+sequenceDiagram
+  actor Dev
+  participant SH as r2r.sh
+  participant P0 as run.py GPU 0
+  participant P1 as run.py GPU 1..k
+  participant FS as eval_out/
+  participant AG as eval_jsons.py
+  Dev->>SH: r2r.sh CKPT 8 0 with GPUs 0-7
+  par chunk 0
+    SH->>P0: CUDA_VISIBLE_DEVICES=0, chunk-idx 0
+    P0->>FS: val_unseen_8-0.json
+  and chunks 1..7
+    SH->>P1: CUDA_VISIBLE_DEVICES=k, chunk-idx k
+    P1->>FS: val_unseen_8-k.json
+  end
+  Dev->>AG: eval_jsons.py DIR 8
+  AG->>FS: read all chunk files
+  AG-->>Dev: mean success, SPL, nDTW, oracle success
+</pre>
+      </div>
+    </section>
+
+    <!-- 09 -->
+    <section id="gotchas">
+      <p class="eyebrow">Save yourself an afternoon</p>
+      <h2>Gotchas</h2>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Symptom</th><th>Cause and fix</th></tr></thead>
+        <tbody>
+          <tr><td>Odd errors inside transformers</td><td>Setup copies <code>llava/train/transformers_replace/*</code> over the installed <code>transformers==4.37.2</code>. Reinstalling transformers removes the patch; copy it again.</td></tr>
+          <tr><td>4-bit load fails with <code>fp16_statistics</code></td><td>The patched <code>modeling_utils.py</code> uses an old keyword. <code>quick_infer.py</code> wraps <code>set_module_quantized_tensor_to_device</code> to translate it. Reuse that shim in new scripts.</td></tr>
+          <tr><td>Training can't find data</td><td>Every path in <code>datasets_mixture.py</code> starts with <code>/PATH_TO_DATA</code>. Replace them before training.</td></tr>
+          <tr><td>Eval "skipping -- evaluation exists"</td><td>The trainer skips a chunk if its result JSON already exists. Delete the file to rerun.</td></tr>
+          <tr><td><code>webdataset</code> import errors</td><td>The package pins 0.2.86; VLN-CE needs 0.1.103. That is why eval uses its own env.</td></tr>
+          <tr><td>NumPy errors in habitat-sim</td><td>Run <code>evaluation/scripts/habitat_sim_autofix.py</code> from the repo root.</td></tr>
+          <tr><td>Eval must be launched from <code>evaluation/</code></td><td>Config paths like <code>habitat_extensions/config/…</code> and <code>data/datasets/…</code> are relative to that folder.</td></tr>
+          <tr><td>Out of memory on a 16 GB GPU</td><td>Use <code>--precision 4bit</code>. Only the LLM is quantized; the vision tower and projector stay in fp16.</td></tr>
+          <tr><td>Model's checkpoint is bf16 but loads as fp16</td><td><code>load_pretrained_model</code> forces <code>torch.float16</code> unless 4/8-bit is chosen. This is expected.</td></tr>
+          <tr><td>Changed the prompt and accuracy dropped</td><td>See the "prompt is a contract" note in Data flow.</td></tr>
+        </tbody>
+      </table></div>
+
+      <h3>Suggested first week</h3>
+      <ol class="steps">
+        <li>Run <code>quick_infer.py --num-samples 10</code> and read its output next to <code>annotations.json</code>.</li>
+        <li>Read <code>quick_infer.py</code> top to bottom (≈200 lines). It is the shortest complete path through the model.</li>
+        <li>Read <code>LazyVLNCEDataset.__getitem__</code> in <code>llava/data/dataset.py</code> and compare its prompt with the one in <code>quick_infer.py</code>.</li>
+        <li>Read <code>NaVILATrainer._eval_checkpoint</code> to see the closed loop and action parsing.</li>
+        <li>Skim <code>llava_arch.py</code> up to <code>prepare_inputs_labels_for_multimodal</code> to understand the image splice.</li>
+        <li>Only then set up the Habitat environment and run a short eval with <code>EVAL.EPISODE_COUNT 20</code>.</li>
+      </ol>
+    </section>
+
+    <!-- 10 -->
+    <section id="glossary">
+      <p class="eyebrow">Terms of art</p>
+      <h2>Glossary</h2>
+      <dl class="gloss">
+        <dt>VLA</dt><dd>Vision-Language-Action model: takes images and text, outputs an action.</dd>
+        <dt>VLN-CE</dt><dd>Vision-and-Language Navigation in Continuous Environments. The agent moves freely in a 3D scene instead of hopping between graph nodes.</dd>
+        <dt>R2R</dt><dd>Room-to-Room: English instructions over Matterport3D houses.</dd>
+        <dt>RxR</dt><dd>Room-across-Room: longer, more detailed instructions in English, Hindi and Telugu.</dd>
+        <dt>EnvDrop</dt><dd>Augmented R2R episodes; NaVILA ships annotations only, videos must be rendered.</dd>
+        <dt>Human</dt><dd>YouTube walking-tour videos labelled with actions, used to teach real-world motion.</dd>
+        <dt>ScanQA</dt><dd>3D scene question answering, mixed in to keep spatial understanding.</dd>
+        <dt>Habitat</dt><dd>Meta's 3D simulator. This repo pins habitat-sim and habitat-lab 0.1.7.</dd>
+        <dt>MP3D</dt><dd>Matterport3D, the scanned houses used as evaluation scenes.</dd>
+        <dt>SR</dt><dd>Success rate: the agent stops within 3 m of the goal.</dd>
+        <dt>OSR</dt><dd>Oracle success: the agent passed within 3 m at any point.</dd>
+        <dt>SPL</dt><dd>Success weighted by path length; penalises wandering.</dd>
+        <dt>nDTW</dt><dd>Normalised dynamic time warping: how closely the path follows the reference path.</dd>
+        <dt>val_unseen</dt><dd>Evaluation split with houses never seen in training.</dd>
+        <dt>ZeRO-3</dt><dd>DeepSpeed mode that shards parameters, gradients and optimizer state across GPUs.</dd>
+      </dl>
+    </section>
+  </main>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+<script>
+  var dark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+  mermaid.initialize({ startOnLoad: true, theme: dark ? "dark" : "neutral", securityLevel: "loose" });
+</script>
+</body>
+</html>
